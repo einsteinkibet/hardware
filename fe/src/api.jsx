@@ -250,6 +250,14 @@ export const helpAPI = {
   getFAQs: () => api.get('/help/faqs/'),
 };
 
+export const expenseAPI = {
+  getAll: () => api.get('/expenses/'),
+  getById: (id) => api.get(`/expenses/${id}/`),
+  create: (expenseData) => api.post('/expenses/add/', expenseData),
+  update: (id, expenseData) => api.put(`/expenses/${id}/edit/`, expenseData),
+  delete: (id) => api.delete(`/expenses/${id}/delete/`),
+};
+
 // Utility functions
 export const downloadBlob = (blob, filename) => {
   const url = window.URL.createObjectURL(blob);
@@ -288,6 +296,91 @@ export const handleAPIError = (error) => {
     // Something else happened
     return error.message || 'An unexpected error occurred.';
   }
+};
+
+// Add to your existing api.jsx
+
+// Balance Transaction API
+export const balanceTransactionAPI = {
+  getByCustomer: (customerId) => api.get(`/customers/${customerId}/balance-transactions/`),
+  getAll: (params = {}) => api.get('/balance-transactions/', { params }),
+  create: (customerId, transactionData) => api.post(`/customers/${customerId}/balance-transactions/`, transactionData),
+};
+
+// Barcode Scan API
+export const barcodeScanAPI = {
+  getAll: (params = {}) => api.get('/barcode-scans/', { params }),
+  getByProduct: (productId) => api.get(`/products/${productId}/barcode-scans/`),
+  create: (scanData) => api.post('/barcode-scans/', scanData),
+};
+
+// Debt API (enhanced)
+export const debtAPI = {
+  getAll: (params = {}) => api.get('/debts/', { params }),
+  getById: (id) => api.get(`/debts/${id}/`),
+  getByCustomer: (customerId) => api.get(`/customers/${customerId}/debts/`),
+  createPayment: (debtId, paymentData) => api.post(`/debts/${debtId}/payments/`, paymentData),
+  sendReminder: (debtId) => api.post(`/debts/${debtId}/send-reminder/`),
+};
+
+// Discount API
+export const discountAPI = {
+  getAll: (params = {}) => api.get('/discounts/', { params }),
+  getById: (id) => api.get(`/discounts/${id}/`),
+  create: (discountData) => api.post('/discounts/', discountData),
+  update: (id, discountData) => api.put(`/discounts/${id}/`, discountData),
+  delete: (id) => api.delete(`/discounts/${id}/`),
+  validate: (code, orderData) => api.post('/discounts/validate/', { code, ...orderData }),
+};
+
+// Expense API (enhanced)
+export const expenseAPI = {
+  getAll: (params = {}) => api.get('/expenses/', { params }),
+  getById: (id) => api.get(`/expenses/${id}/`),
+  create: (expenseData) => api.post('/expenses/', expenseData),
+  update: (id, expenseData) => api.put(`/expenses/${id}/`, expenseData),
+  delete: (id) => api.delete(`/expenses/${id}/`),
+  getCategories: () => api.get('/expenses/categories/'),
+  getSummary: (startDate, endDate) => api.get('/expenses/summary/', { 
+    params: { start_date: startDate, end_date: endDate } 
+  }),
+};
+
+// Help Tip API
+export const helpTipAPI = {
+  getAll: (params = {}) => api.get('/help-tips/', { params }),
+  getById: (id) => api.get(`/help-tips/${id}/`),
+  getByPage: (pageUrl) => api.get(`/help-tips/page/${encodeURIComponent(pageUrl)}/`),
+  create: (tipData) => api.post('/help-tips/', tipData),
+  update: (id, tipData) => api.put(`/help-tips/${id}/`, tipData),
+  delete: (id) => api.delete(`/help-tips/${id}/`),
+};
+
+// Inventory History API
+export const inventoryHistoryAPI = {
+  getAll: (params = {}) => api.get('/inventory-history/', { params }),
+  getByProduct: (productId) => api.get(`/products/${productId}/inventory-history/`),
+  getByInventory: (inventoryId) => api.get(`/inventory/${inventoryId}/history/`),
+};
+
+// Return API
+export const returnAPI = {
+  getAll: (params = {}) => api.get('/returns/', { params }),
+  getById: (id) => api.get(`/returns/${id}/`),
+  create: (returnData) => api.post('/returns/', returnData),
+  update: (id, returnData) => api.put(`/returns/${id}/`, returnData),
+  process: (id, processingData) => api.post(`/returns/${id}/process/`, processingData),
+  getReasons: () => api.get('/returns/reasons/'),
+};
+
+// Tax Rate API
+export const taxRateAPI = {
+  getAll: (params = {}) => api.get('/tax-rates/', { params }),
+  getById: (id) => api.get(`/tax-rates/${id}/`),
+  create: (taxData) => api.post('/tax-rates/', taxData),
+  update: (id, taxData) => api.put(`/tax-rates/${id}/`, taxData),
+  delete: (id) => api.delete(`/tax-rates/${id}/`),
+  calculate: (orderData) => api.post('/tax-rates/calculate/', orderData),
 };
 
 export default api;

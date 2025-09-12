@@ -13,6 +13,7 @@ from django.core.cache import cache
 from django.conf import settings
 from .utils.sms_utils import send_sms
 from .utils.export_utils import export_to_excel, export_to_pdf
+from rest_framework import generics
 
 # api/views_auth.py
 from rest_framework import status
@@ -24,6 +25,7 @@ from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
 from .models import Customer
 import json
+from .serializers import ExpenseSerializer
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -1339,3 +1341,67 @@ def dashboard_view(request):
         "best_sellers": best_sellers,
         "low_stock": low_stock,
     })
+
+###########'
+###########expense
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def expense_list(request):
+    """List all expenses"""
+    expenses = Expense.objects.all().order_by("-created_at")
+    serializer = ExpenseSerializer(expenses, many=True)
+    return Response(serializer.data)
+
+
+@api_view(["GET"])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def expense_detail(request, pk):
+    """Get a single expense by ID"""
+    try:
+        expense = Expense.objects.get(pk=pk)
+    except Expense.DoesNotExist:
+        return Response({"error": "Expense not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ExpenseSerializer(expense)
+    return Response(serializer.data)
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def expense_create(request):
+    """Create a new expense"""
+    serializer = ExpenseSerializer(data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["PUT"])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def expense_update(request, pk):
+    """Update an expense"""
+    try:
+        expense = Expense.objects.get(pk=pk)
+    except Expense.DoesNotExist:
+        return Response({"error": "Expense not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    serializer = ExpenseSerializer(expense, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["DELETE"])
+@permission_classes([IsAuthenticatedOrReadOnly])
+def expense_delete(request, pk):
+    """Delete an expense"""
+    try:
+        expense = Expense.objects.get(pk=pk)
+    except Expense.DoesNotExist:
+        return Response({"error": "Expense not found"}, status=status.HTTP_404_NOT_FOUND)
+
+    expense.delete()
+    return Response({"message": "Expense deleted successfully"}, status=status.HTTP_204_NO_CONTENT)

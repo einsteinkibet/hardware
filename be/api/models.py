@@ -59,6 +59,7 @@ class Category(models.Model):
     description = models.TextField(blank=True)
     parent = models.ForeignKey('self', on_delete=models.CASCADE, null=True, blank=True, related_name='children')
     image = models.ImageField(upload_to='categories/', null=True, blank=True)
+    is_active = models.BooleanField(default=True)
     
     class Meta:
         verbose_name_plural = "Categories"
@@ -96,9 +97,6 @@ class Supplier(models.Model):
     contact_person = models.CharField(max_length=100)
     email = models.EmailField()
     phone = models.CharField(max_length=20)
-    address = models.TextField()
-    is_active = models.BooleanField(default=True)
-    created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
         ordering = ['name']
@@ -123,7 +121,7 @@ class Product(models.Model):
     description = models.TextField()
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True, related_name='products')
     supplier = models.ForeignKey(Supplier, on_delete=models.SET_NULL, null=True, related_name='products')
-    sku = models.CharField(max_length=50, unique=True)
+    sku = models.CharField(max_length=50, unique=True, blank=True)
     barcode = models.CharField(max_length=100, unique=True, blank=True, null=True)
     price = models.DecimalField(max_digits=10, decimal_places=2)
     cost_price = models.DecimalField(max_digits=10, decimal_places=2)

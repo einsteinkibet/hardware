@@ -111,8 +111,12 @@ urlpatterns = [
     path('serviceworker.js', serve, {'path': 'js/serviceworker.js', 'document_root': settings.STATIC_ROOT}),
     path('manifest.json', serve, {'path': 'manifest.json', 'document_root': settings.STATIC_ROOT}),
 
-
-
+    #expense urls
+    path('expenses/', views.expense_list, name='expense_list'),
+    path('expenses/<int:pk>/', views.expense_detail, name='expense_detail'),
+    path('expenses/add/', views.expense_create, name='expense_create'),
+    path('expenses/<int:pk>/edit/', views.expense_update, name='expense_update'),
+    path('expenses/<int:pk>/delete/', views.expense_delete, name='expense_delete'),
 
     # Export URLs
     path('export/products/', views.export_data, {'model_name': 'products'}, name='export_products'),
